@@ -17,6 +17,8 @@ import android.webkit.WebStorage;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import androidx.annotation.NonNull;
+
+
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
@@ -92,11 +94,31 @@ public class FlutterWebView implements PlatformView, MethodCallHandler {
 
     platformThreadHandler = new Handler(context.getMainLooper());
     // Allow local storage.
-    webView.getSettings().setDomStorageEnabled(true);
+//    WebSettings webSetting = webView.getSettings();
+    webView.getSettings().setJavaScriptEnabled(true);
+    webView.getSettings().setBuiltInZoomControls(true);
     webView.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
-
-    // Multi windows is set with FlutterWebChromeClient by default to handle internal bug: b/159892679.
+    webView.getSettings().setDomStorageEnabled(true);
+    webView.getSettings().setAllowFileAccess(true);
+    // webView.getSettings().setLayoutAlgorithm(LayoutAlgorithm.NARROW_COLUMNS);
+    webView.getSettings().setSupportZoom(true);
+    webView.getSettings().setLoadWithOverviewMode(true);
+    webView.getSettings().setUseWideViewPort(true);
+    webView.getSettings().setDatabaseEnabled(true);
     webView.getSettings().setSupportMultipleWindows(true);
+    webView.getSettings().setAppCacheEnabled(true);
+    // webView.getSettings().setPluginsEnabled(true);
+    webView.getSettings().setGeolocationEnabled(true);
+    webView.getSettings().setAppCacheMaxSize(Long.MAX_VALUE);
+    webView.getSettings().setMixedContentMode(android.webkit.WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+    // webView.getSettings().setPluginState(WebSettings.PluginState.ON_DEMAND);
+    // webView.getSettings().setRenderPriority(WebSettings.RenderPriority.HIGH);
+    //android 默认是可以打开_bank的，是因为它默认设置了WebSettings.setSupportMultipleWindows(false)
+    //在false状态下，_bank也会在当前页面打开……
+    //而x5浏览器，默认开启了WebSettings.setSupportMultipleWindows(true)，
+    // 所以打不开……主动设置成false就可以打开了
+    //需要支持多窗体还需要重写WebChromeClient.onCreateWindow
+    webView.getSettings().setSupportMultipleWindows(false);
     webView.setWebChromeClient(new FlutterWebChromeClient());
 
     methodChannel = new MethodChannel(messenger, "plugins.flutter.io/webview_" + id);
